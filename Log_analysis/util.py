@@ -4,6 +4,8 @@ import requests
 import json
 import pycountry 
 import re
+import urllib
+from tqdm.notebook import tqdm
 
 def html_to_df(url, clean_empty = False , attrs = {}, helper = None):
     '''
@@ -39,7 +41,18 @@ def ip_loc(x):
         data = json.loads(url.read().decode().split("(")[1].strip(")"))
     return {"country_code":data["country_code"], 'latitude':data['latitude'],'longitude':data['longitude']}
 
-
+def loc_dict_maker(series):
+    '''
+    input:
+        series: series of unique ip address.
+    output:
+        res: dict contain country code, lat, long.
+    '''
+    res = {}
+    for ip in tqdm(series):
+        res[ip] = ip_loc(ip)
+    return res
+    
 
 def alpha3code(column):
     '''
